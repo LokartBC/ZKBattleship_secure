@@ -62,7 +62,7 @@ template MapShips(){
 	}
 }
 
-// hash ship positions with private salt
+// hash ship positions (as binary array) with private salt
 template ShipHash() {
 	signal input in[100];
 	signal input salt;

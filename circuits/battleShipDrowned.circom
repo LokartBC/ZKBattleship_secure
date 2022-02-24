@@ -5,6 +5,7 @@ include "../../ZSnarks/circom-circuits/multiplexer.circom";
 
 template BattleShipDrowned() {
     // input ships as a number corresponding to their binary representation on the grid
+    // (see XYOShipsToUint to see how to generate these numbers)    
     signal input carrier;
     signal input battleship;
     signal input cruiser;
@@ -14,7 +15,7 @@ template BattleShipDrowned() {
     signal input salt; // add salt to the hash to prevent attacker from finding it
 
     signal input publicShipHash;
-    signal input targets; // binary map of past targets as uint
+    signal input targets; // binary map of past targets as uint (to be generated in javascript)
 
     signal output out[5]; // binary response to tell the state of each ship, 1 means drowned
 

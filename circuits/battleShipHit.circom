@@ -1,10 +1,11 @@
 pragma circom 2.0.0;
 
 include "shipHash.circom";
-include "../../ZSnarks/maci/trees/incrementalQuinTree.circom";
+include "../../ZSnarks/circom-circuits/multiplexer.circom";
 
 template BattleShipHit() {
     // input ships as a number corresponding to their binary representation on the grid
+    // (see XYOShipsToUint to see how to generate these numbers)
     signal input carrier;
     signal input battleship;
     signal input cruiser;
@@ -14,7 +15,7 @@ template BattleShipHit() {
     signal input salt; // add salt to the hash to prevent attacker from finding it
 
     signal input publicShipHash;
-    signal input target[2];
+    signal input target; // binary map of target as uint (to be generated in javascript)
 
     signal output out; // binary response to tell if a ship is hit
 
@@ -30,24 +31,23 @@ template BattleShipHit() {
     shipHash.salt <== salt;
     publicShipHash === shipHash.out;
 
-    // target check (less than 10)
-    component lessThan1 = LessThan(252);
-    lessThan1.in[0] <== target[0]; 
-    lessThan1.in[1] <== 10;
-    lessThan1.out === 1;
-
-    component lessThan2 = LessThan(252);
-    lessThan2.in[0] <== target[1]; 
-    lessThan2.in[1] <== 10;
-    lessThan2.out === 1;
-
     // hit check
-    component quinSelector = QuinSelector(100);
+    component num2Bits_target = Num2Bits(100);
+    component arraySum = ArraySum(100);
+    component escalarProduct = EscalarProduct(100);
+    
+    num2Bits_target.in <== target;    
     for(var i=0; i<100; i++){
-        quinSelector.in[i] <== num2Bits.out[i];     
-    }    
-    quinSelector.index <== target[0]+10*target[1];
-    out <== quinSelector.out;
+        arraySum.in[i] <== num2Bits_target.out[i];
+        escalarProduct.in1[i] <== num2Bits.out[i];
+        escalarProduct.in2[i] <== num2Bits_target.out[i];    
+    }
+
+    // check that target corresponds to one xy only
+    arraySum.out === 1;
+
+    out <== escalarProduct.out;
+    out*(1-out) === 0;
 }
 
 component main {public [publicShipHash,target]} = BattleShipHit();

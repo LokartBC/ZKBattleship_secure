@@ -1,0 +1,8 @@
+{
+"carrier" : [0,0,0],
+"battleship" : [1,0,0],
+"cruiser" : [2,0,0],
+"submarine" : [3,0,0],
+"destroyer" : [4,0,0],
+"salt" : 11111
+}

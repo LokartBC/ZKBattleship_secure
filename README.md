@@ -1,4 +1,4 @@
-# zkbattleship
+# ZKBattleship secure
 
 A secure and complete Zero Knowledge Proof Battleship game. The circuits can proove:
 1. that a grid is valid

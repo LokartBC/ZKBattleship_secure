@@ -4,37 +4,28 @@ include "shipHash.circom";
 include "../../ZSnarks/maci/trees/incrementalQuinTree.circom";
 
 template BattleShipHit() {
-    // x,y and orientation (0 if vertical, 1 if horizontal)
-    signal input carrier[3];
-    signal input battleship[3];
-    signal input cruiser[3];
-    signal input submarine[3];
-    signal input destroyer[3];
+    // input ships as a number corresponding to their binary representation on the grid
+    signal input carrier;
+    signal input battleship;
+    signal input cruiser;
+    signal input submarine;
+    signal input destroyer;
 
     signal input salt; // add salt to the hash to prevent attacker from finding it
 
     signal input publicShipHash;
     signal input target[2];
 
-    signal output out;
+    signal output out; // binary response to tell if a ship is hit
 
-    signal isHit;  
-
-    // hash check (no need to check positions again)
-    component mapShips = MapShips();
-    component shipHash = ShipHash();    
-
-    for(var i=0; i<3; i++){
-        mapShips.carrier[i] <== carrier[i];
-        mapShips.battleship[i] <== battleship[i];
-        mapShips.cruiser[i] <== cruiser[i];
-        mapShips.submarine[i] <== submarine[i];
-        mapShips.destroyer[i] <== destroyer[i];
-    }   
+    // hash check 
+    component num2Bits = Num2Bits(100);
+    num2Bits.in <== carrier + battleship + cruiser + submarine + destroyer;
 
     // hash the ship positions with salt (also checks that the grid is binary as it should be)
+    component shipHash = ShipHash();    
     for(var i=0; i<100; i++){
-        shipHash.in[i] <== mapShips.out[i];     
+        shipHash.in[i] <== num2Bits.out[i];     
     }
     shipHash.salt <== salt;
     publicShipHash === shipHash.out;
@@ -53,7 +44,7 @@ template BattleShipHit() {
     // hit check
     component quinSelector = QuinSelector(100);
     for(var i=0; i<100; i++){
-        quinSelector.in[i] <== mapShips.out[i];     
+        quinSelector.in[i] <== num2Bits.out[i];     
     }    
     quinSelector.index <== target[0]+10*target[1];
     out <== quinSelector.out;

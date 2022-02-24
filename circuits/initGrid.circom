@@ -3,7 +3,7 @@ pragma circom 2.0.0;
 include "./shipHash.circom";
 
 
-// hashes ship positions + salt number
+// Verifies validity of the ships' positions and returns the public hash encoding these positions
 template InitGrid() {
 
 	// inputs of ships xy positions
@@ -37,7 +37,7 @@ template InitGrid() {
     }	
 
 	for(var i=0; i<100; i++){
-		arraySum.inp[i] <== mapShips.out[i];
+		arraySum.in[i] <== mapShips.out[i];
 		shipHash.in[i] <== mapShips.out[i];		
 	}
 	arraySum.out === 17; // ships should occupy a total of exactly 17 different spots

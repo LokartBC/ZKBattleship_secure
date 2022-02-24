@@ -1,6 +1,9 @@
 # zkbattleship
 
-A Zero Knowledge Proof Battleship game
+A secure and complete Zero Knowledge Proof Battleship game. The circuits can proove:
+1. that a grid is valid
+2. wether a target hits a ship 
+3. which ships where drowned by the past series or targets
 
 Circuit implementations in [circom](https://github.com/iden3/circom) (which can then be used with [snarkjs](https://github.com/iden3/snarkjs)).  
 
@@ -12,9 +15,9 @@ License: Creative Commons
 
 ## Structure
 
-`./` main folder holds the implementation of the circuits  
-`./compile/` subfolder contains shell scripts to generate circuits and proofs  
-`./input/` subfolder contains inputs used for testing  
+`circuits/` main folder holds the implementation of the circuits  
+`circuits/compile/` subfolder contains shell scripts to generate circuits and proofs  
+`circuits/input/` subfolder contains inputs used for testing  
 
 ## Build circuits
 
@@ -69,7 +72,7 @@ inputs:
 outputs:
 - 5 booleans: wether each ship is drowned or not
 
-## Test
+## Test circuits
 
 Inputs are provided as test examples.
 
